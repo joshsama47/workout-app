@@ -13,9 +13,7 @@ class WorkoutCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () => context.go('/workout/${workout.id}'),
         child: Column(
@@ -39,14 +37,14 @@ class WorkoutCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    workout.name,
-                    style: Theme.of(context).textTheme.headline6,
+                    workout.name ?? '',
+                    style: Theme.of(context).textTheme.titleMedium,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${workout.exercises.length} exercises',
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),

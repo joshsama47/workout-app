@@ -1,96 +1,35 @@
-# Workout Planner App Blueprint
+# Project Blueprint
 
 ## Overview
 
-This document outlines the plan and progress for creating a workout planner application for Flutter. The app will feature a list of workouts, a detail screen for each workout, a favorites feature, and a workout-in-progress screen.
+This document outlines the architecture, features, and design of the fitness application. The app is designed to help users track their workouts, monitor their progress, and stay motivated.
 
 ## Style, Design, and Features
 
-### Version 1.0 (Initial)
+### Style and Design
 
-*   **UI:** Modern, clean design with a dark theme.
-*   **Fonts:** `google_fonts` for custom typography.
-*   **State Management:** `provider` for theme management.
-*   **Navigation:** `go_router` for routing between screens.
-*   **Animations:** `lottie` for workout animations.
-*   **Screens:**
-    *   **Workout List Screen:** Displays a list of workouts.
-    *   **Workout Detail Screen:** Shows workout details and animation.
+*   **Theme:** The app uses a modern, clean design with a focus on usability. The primary color is a deep purple, with a light and dark theme available.
+*   **Typography:** The app uses the Google Fonts library to provide a clean and readable text style.
+*   **Iconography:** The app uses Material Design icons to provide a consistent and intuitive user experience.
 
-### Version 1.1
+### Features
 
-*   **Project Structure:**
-    *   `screens` directory for UI screens.
-    *   `data` directory for workout data.
-*   **UI Enhancements:**
-    *   Workout list is now a `GridView`.
-    *   Added `Hero` animations for transitions between the list and detail screens.
+*   **User Authentication:** Users can create an account and log in to the app.
+*   **Workout Creation:** Users can create custom workouts with a variety of exercises.
+*   **Workout Tracking:** Users can track their workout sessions, including the exercises performed, sets, reps, and weight.
+*   **Workout History:** Users can view their workout history to track their progress over time.
+*   **Personal Records:** The app tracks and displays users' personal records for a variety of exercises, including weight, reps, time, and distance.
 
-### Version 1.2
+## Current Task: Comprehensive Personal Record Tracking
 
-*   **Theming:**
-    *   Implemented Material 3 theming using `ColorScheme.fromSeed` for a more modern and harmonized color palette.
-*   **UI Enhancements:**
-    *   Redesigned the workout cards on the home screen to display the Lottie animation directly.
-    *   Added a gradient overlay to the workout cards to improve text legibility.
-    *   Refined the card's shape and shadow for a more modern, "lifted" feel.
+### Plan and Steps
 
-### Version 1.3
-
-*   **Workout Detail Screen:**
-    *   Added a "Start Workout" button to make the screen more interactive.
-    *   Added a decorative container with a gradient to the top of the screen for a more polished look.
-
-### Version 1.4
-
-*   **Favorites Feature:**
-    *   Added an `isFavorite` boolean to the `Workout` model.
-    *   Created a `WorkoutProvider` to manage the state of workouts, including favorites.
-    *   Added a `FavoritesScreen` to display a grid of the user's favorite workouts.
-    *   Added favorite toggle icons to workout cards and the workout detail screen.
-*   **Navigation:**
-    *   Implemented a `BottomNavigationBar` to switch between the main workout list and the favorites screen.
-*   **State Management:**
-    *   Used a `MultiProvider` to provide both the `ThemeProvider` and `WorkoutProvider` to the app.
-
-## Current Plan
-
-### Step 1: Project Setup (Completed)
-
-1.  **Add Dependencies:** Added `google_fonts`, `provider`, `go_router`, and `lottie` to `pubspec.yaml`.
-2.  **Create `blueprint.md`:** Done.
-3.  **Update `lib/main.dart`:** Set up the main app structure with `MaterialApp.router`, `ChangeNotifierProvider`, and a basic theme.
-
-### Step 2: Create App Structure (Completed)
-
-1.  **Create `screens`, `models`, `assets`, `data`, `providers`, and `widgets` directories.**
-
-### Step 3: Build the Features (Completed)
-
-1.  **Workout Model:** Created a `Workout` model class.
-2.  **Workout Data:** Created a list of sample workouts.
-3.  **Workout Screens:** Implemented `WorkoutListScreen`, `WorkoutDetailScreen`, and `WorkoutInProgressScreen`.
-4.  **Routing:** Configured `go_router` to navigate between the screens.
-
-### Step 4: Refactor and Enhance UI (Completed)
-
-1.  **Restructure Project:** Moved screens and data into separate directories.
-2.  **Improve UI:** Changed workout list to a `GridView` and added `Hero` animations.
-
-### Step 5: Modernize UI and Theming (Completed)
-
-1.  **Material 3 Theming:** Implemented Material 3 theming using `ColorScheme.fromSeed`.
-2.  **Redesigned Workout Cards:** Created a reusable `WorkoutCard` widget and updated the workout list to use it.
-
-### Step 6: Enhance Workout Detail Screen (Completed)
-
-1.  **Add "Start Workout" Button:** Added a button to the detail screen.
-2.  **Add Decorative Container:** Added a container with a gradient to the detail screen.
-
-### Step 7: Add Favorites Feature (Completed)
-
-1.  **Update `Workout` Model:** Added `isFavorite` property.
-2.  **Create `WorkoutProvider`:** To manage workout state.
-3.  **Create `FavoritesScreen`:** To display favorite workouts.
-4.  **Update UI:** Added favorite buttons to `WorkoutCard` and `WorkoutDetailScreen`.
-5.  **Add `BottomNavigationBar`:** For easy navigation between the main list and favorites.
+1.  **Create `RecordType` Enum:** A new enum, `RecordType`, was created to represent the different types of personal records that can be tracked (weight, reps, time, distance).
+2.  **Update `PersonalRecord` Model:** The `PersonalRecord` model was updated to include a `RecordType` and a `values` map to store the record data in a more flexible way.
+3.  **Refine `RecordType` Enum:** The `RecordType.weight` enum value was renamed to `RecordType.weightAndReps` to more accurately reflect that a personal record for a weight-based exercise is a combination of both weight and repetitions.
+4.  **Update `Exercise` Model:** The `Exercise` model was updated to include a `recordType` field to associate each exercise with a specific type of personal record.
+5.  **Update `default_exercises.dart`:** The `default_exercises.dart` file was updated to include the `recordType` for each exercise and to add new exercises with different record types.
+6.  **Update `PersonalRecordCard` Widget:** The `PersonalRecordCard` widget was updated to handle the new `PersonalRecord` model and display the information appropriately based on the `RecordType`.
+7.  **Update `PersonalRecordService`:** The `PersonalRecordService` was updated to handle the new `PersonalRecord` model.
+8.  **Update `WorkoutService`:** The `WorkoutService` was updated to check for new personal records based on the new `PersonalRecord` model, and to correctly handle `weightAndReps` by finding the set with the highest weight, and if there are multiple sets with the same weight, using the one with the most reps.
+9.  **Update `ProfileScreen`:** The `ProfileScreen` was updated to handle the new `PersonalRecord` model.

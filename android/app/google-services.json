@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "207644957254",
+    "project_id": "fitness-app-gemini",
+    "storage_bucket": "fitness-app-gemini.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207644957254:android:d791e3db45e9089a3d4847",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbL9nHnedCDBWSdEhqWukvwIt-KesrWm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

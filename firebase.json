@@ -1,0 +1,28 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fitness-app-gemini",
+          "appId": "1:207644957254:android:d791e3db45e9089a3d4847",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "fitness-app-gemini",
+          "configurations": {
+            "android": "1:207644957254:android:d791e3db45e9089a3d4847",
+            "web": "1:207644957254:web:42995423d187d6d93d4847"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "nam5",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
