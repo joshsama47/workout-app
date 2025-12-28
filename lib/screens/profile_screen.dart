@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myapp/models/personal_record.dart';
+import 'package:myapp/models/workout_session.dart';
 import 'package:myapp/services/personal_record_service.dart';
+import 'package:myapp/services/workout_service.dart';
 import 'package:myapp/widgets/personal_record_card.dart';
+import 'package:myapp/widgets/progress_chart.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_provider.dart';
@@ -14,6 +17,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
     final personalRecordService = PersonalRecordService();
+    final workoutService = WorkoutService();
 
     return Scaffold(
       body: Stack(
@@ -46,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
                       radius: 50,
                       backgroundColor: Colors.white,
                       child: Text(
-                        user?.name?[0] ?? 'U',
+                        user?.displayName?[0] ?? 'U',
                         style: TextStyle(
                           fontSize: 40,
                           color: Theme.of(context).primaryColor,
@@ -55,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      user?.name ?? 'User',
+                      user?.displayName ?? 'User',
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -64,11 +68,59 @@ class ProfileScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildStatItem('Workouts', '12'),
-                        _buildStatItem('Streak', '5 days'),
+                        FutureBuilder<int>(
+                          future: workoutService.getWorkoutStreak(
+                            user?.uid ?? '',
+                          ),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return _buildStatItem('Streak', '-');
+                            }
+                            if (snapshot.hasError) {
+                              return _buildStatItem('Streak', '0');
+                            }
+                            return _buildStatItem(
+                              'Streak',
+                              '${snapshot.data} days',
+                            );
+                          },
+                        ),
                         _buildStatItem('Trophies', '3'),
                       ],
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Progress',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 200,
+                child: FutureBuilder<List<WorkoutSession>>(
+                  future: workoutService.getWorkoutHistoryForChart(
+                    user?.uid ?? '',
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                        child: Text('No workout history yet.'),
+                      );
+                    }
+                    final sessions = snapshot.data!;
+                    return ProgressChart(
+                      sessions: sessions,
+                      exerciseName: 'Bench Press',
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 24),
@@ -79,7 +131,7 @@ class ProfileScreen extends StatelessWidget {
               Expanded(
                 child: FutureBuilder<List<PersonalRecord>>(
                   future: personalRecordService.getPersonalRecords(
-                    user?.id ?? '',
+                    user?.uid ?? '',
                   ),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {

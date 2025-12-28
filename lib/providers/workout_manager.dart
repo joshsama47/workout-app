@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/workout.dart';
 import '../models/exercise.dart';
+import '../models/personal_record.dart';
 
 class WorkoutManager with ChangeNotifier {
   final List<Workout> _workouts = [];
@@ -17,6 +18,7 @@ class WorkoutManager with ChangeNotifier {
         description: e['description'] ?? '',
         animation: e['animation'] ?? '',
         sets: [],
+        recordType: RecordType.reps,
       );
     }).toList();
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:myapp/ai_coach/coach.dart';
 import 'package:myapp/models/exercise.dart';
+import 'package:myapp/models/personal_record.dart';
 import 'package:myapp/models/workout_session.dart';
 import 'package:myapp/pose_detection/exercise_model.dart';
 import 'package:myapp/pose_detection/pose_metrics.dart';
@@ -57,7 +58,12 @@ class _LiveWorkoutScreenState extends State<LiveWorkoutScreen> {
       workoutName: widget.exerciseName,
       startTime: DateTime.now(),
       status: 'in_progress',
-      exercises: [Exercise(name: widget.exerciseName, sets: [])],
+      exercises: [
+        Exercise(
+            name: widget.exerciseName,
+            sets: [],
+            recordType: RecordType.reps) //TODO: Fix this
+      ],
     );
 
     _initializeCamera();
@@ -290,8 +296,6 @@ class PosePainter extends CustomPainter {
       PoseLandmarkType.leftElbow: PoseLandmarkType.leftWrist,
       PoseLandmarkType.rightShoulder: PoseLandmarkType.rightElbow,
       PoseLandmarkType.rightElbow: PoseLandmarkType.rightWrist,
-      PoseLandmarkType.leftShoulder: PoseLandmarkType.leftHip,
-      PoseLandmarkType.rightShoulder: PoseLandmarkType.rightHip,
       PoseLandmarkType.leftHip: PoseLandmarkType.leftKnee,
       PoseLandmarkType.leftKnee: PoseLandmarkType.leftAnkle,
       PoseLandmarkType.rightHip: PoseLandmarkType.rightKnee,

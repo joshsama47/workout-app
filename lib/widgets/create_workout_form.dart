@@ -17,7 +17,6 @@ class CreateWorkoutForm extends StatefulWidget {
 class _CreateWorkoutFormState extends State<CreateWorkoutForm> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
-  String _description = '';
   final List<Exercise> _exercises = [];
 
   void _addExercise(Exercise exercise) {
@@ -58,10 +57,6 @@ class _CreateWorkoutFormState extends State<CreateWorkoutForm> {
               },
               onSaved: (value) => _name = value!,
             ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Description'),
-              onSaved: (value) => _description = value!,
-            ),
             const SizedBox(height: 20),
             _buildExerciseList(),
             TextButton.icon(
@@ -77,8 +72,11 @@ class _CreateWorkoutFormState extends State<CreateWorkoutForm> {
                   final newWorkout = Workout(
                     id: const Uuid().v4(),
                     name: _name,
-                    description: _description,
                     exercises: _exercises,
+                    sets: 0,
+                    reps: 0,
+                    rest: 0,
+                    duration: 0,
                   );
                   widget.onWorkoutCreated(newWorkout);
                   Navigator.of(context).pop();

@@ -13,8 +13,8 @@ class ExerciseCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
         title: Text(exercise.name),
-        subtitle: Text(exercise.description),
-        trailing: Text('${exercise.sets}x${exercise.reps}'),
+        subtitle: Text(exercise.description ?? ''),
+        trailing: Text('${exercise.sets.length} sets'),
       ),
     );
   }

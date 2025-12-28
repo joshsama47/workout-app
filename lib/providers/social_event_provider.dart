@@ -21,7 +21,7 @@ class SocialEventProvider with ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      print('Error fetching social events: $e');
+      debugPrint('Error fetching social events: $e');
     }
   }
 
@@ -32,7 +32,7 @@ class SocialEventProvider with ChangeNotifier {
       });
       _fetchSocialEvents();
     } catch (e) {
-      print('Error joining event: $e');
+      debugPrint('Error joining event: $e');
     }
   }
 }

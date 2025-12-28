@@ -69,16 +69,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => BodyCompositionProvider()),
         ChangeNotifierProvider(create: (context) => NutritionProvider()),
-        ChangeNotifierProxyProvider<UserProvider, ProgressService>(
-          create: (context) => ProgressService(),
-          update: (context, userProvider, progressService) {
-            final userId = userProvider.user?.uid;
-            if (userId != null) {
-              progressService!.fetchCompletedWorkouts(userId);
-            }
-            return progressService!;
-          },
-        ),
+        Provider<ProgressService>(create: (_) => ProgressService()),
         ChangeNotifierProvider(create: (context) => MusicService()),
         ChangeNotifierProvider(create: (context) => CustomWorkoutProvider()),
         ChangeNotifierProvider(create: (context) => ChallengeProvider()),

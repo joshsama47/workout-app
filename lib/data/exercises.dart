@@ -1,4 +1,5 @@
 import 'package:myapp/models/exercise.dart';
+import 'package:myapp/models/personal_record.dart';
 
 final List<Exercise> allExercises = [
   Exercise(
@@ -7,6 +8,7 @@ final List<Exercise> allExercises = [
     description: 'A classic bodyweight exercise.',
     animation: 'assets/animations/pushup.json',
     sets: [],
+    recordType: RecordType.reps,
   ),
   Exercise(
     id: 'ex002',
@@ -14,6 +16,7 @@ final List<Exercise> allExercises = [
     description: 'A compound, full-body exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
     fsmDefinition: {
       "exercise": "squat",
       "signals": ["knee_angle"],
@@ -63,6 +66,7 @@ final List<Exercise> allExercises = [
     description: 'An effective lower-body exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex004',
@@ -70,6 +74,7 @@ final List<Exercise> allExercises = [
     description: 'A core strength exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.time,
   ),
   Exercise(
     id: 'ex005',
@@ -77,6 +82,7 @@ final List<Exercise> allExercises = [
     description: 'A full-body cardio exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.time,
   ),
   Exercise(
     id: 'ex006',
@@ -84,6 +90,7 @@ final List<Exercise> allExercises = [
     description: 'An abdominal exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.reps,
   ),
   Exercise(
     id: 'ex007',
@@ -91,6 +98,7 @@ final List<Exercise> allExercises = [
     description: 'A full-body strength and cardio exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.reps,
   ),
   Exercise(
     id: 'ex008',
@@ -98,6 +106,7 @@ final List<Exercise> allExercises = [
     description: 'A dynamic, full-body exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.time,
   ),
   Exercise(
     id: 'ex009',
@@ -105,6 +114,7 @@ final List<Exercise> allExercises = [
     description: 'An isolation exercise for the biceps.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex010',
@@ -112,6 +122,7 @@ final List<Exercise> allExercises = [
     description: 'An isolation exercise for the triceps.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex011',
@@ -119,6 +130,7 @@ final List<Exercise> allExercises = [
     description: 'A compound shoulder exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex012',
@@ -126,6 +138,7 @@ final List<Exercise> allExercises = [
     description: 'A compound, full-body exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex013',
@@ -133,6 +146,7 @@ final List<Exercise> allExercises = [
     description: 'A compound chest exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex014',
@@ -140,6 +154,7 @@ final List<Exercise> allExercises = [
     description: 'A compound back exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex015',
@@ -147,6 +162,7 @@ final List<Exercise> allExercises = [
     description: 'A compound back exercise.',
     animation: 'assets/animations/placeholder.json',
     sets: [],
+    recordType: RecordType.weightAndReps,
   ),
   Exercise(
     id: 'ex016',
@@ -154,5 +170,6 @@ final List<Exercise> allExercises = [
     description: 'An abdominal exercise.',
     animation: 'assets/animations/situp.json',
     sets: [],
+    recordType: RecordType.reps,
   ),
 ];

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/models/workout_session.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/exercise.dart';
+import '../models/personal_record.dart';
 
 class AddExerciseModal extends StatefulWidget {
   final Function(Exercise) onExerciseAdded;
@@ -57,9 +59,12 @@ class _AddExerciseModalState extends State<AddExerciseModal> {
                   );
                   widget.onExerciseAdded(
                     Exercise(
+                      id: const Uuid().v4(),
                       name: _name,
                       description: _description,
+                      animation: 'assets/animations/placeholder.json',
                       sets: sets,
+                      recordType: RecordType.reps,
                     ),
                   );
                   Navigator.of(context).pop();

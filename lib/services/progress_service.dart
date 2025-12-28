@@ -1,65 +1,54 @@
-import 'dart:collection';
-import 'dart:developer' as developer;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:myapp/models/workout_session.dart';
 
-class ProgressService with ChangeNotifier {
-  final List<WorkoutSession> _completedWorkouts = [];
+class ProgressService {
+  List<Map<String, dynamic>> getStrengthProgression(
+    List<WorkoutSession> sessions,
+    String exerciseName,
+  ) {
+    final relevantSessions = sessions
+        .where((s) => s.exercises.any((e) => e.name == exerciseName))
+        .toList();
 
-  UnmodifiableListView<WorkoutSession> get completedWorkouts =>
-      UnmodifiableListView(_completedWorkouts);
+    relevantSessions.sort((a, b) => a.startTime.compareTo(b.startTime));
 
-  Future<void> fetchCompletedWorkouts(String userId) async {
-    if (userId.isEmpty) return;
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .collection('workout_sessions')
-          .orderBy('endTime', descending: true)
-          .get();
+    return relevantSessions.map((session) {
+      final exercise = session.exercises.firstWhere(
+        (e) => e.name == exerciseName,
+      );
+      final maxWeight = exercise.sets
+          .map((s) => s.reps.map((r) => r.metrics?.rom ?? 0).reduce((max, current) => current > max ? current : max))
+          .reduce((max, current) => current > max ? current : max);
 
-      _completedWorkouts.clear();
-      for (var doc in snapshot.docs) {
-        _completedWorkouts.add(WorkoutSession.fromJson(doc.data()));
-      }
-      notifyListeners();
-    } catch (e, s) {
-      developer.log(
-        'Error fetching completed workouts',
-        name: 'myapp.progress_service',
-        error: e,
-        stackTrace: s,
+      return {'date': session.startTime, 'value': maxWeight};
+    }).toList();
+  }
+
+  List<Map<String, dynamic>> getVolumeProgression(
+    List<WorkoutSession> sessions,
+  ) {
+    final weeklyVolume = <DateTime, double>{};
+
+    for (final session in sessions) {
+      final weekStart = _getWeekStart(session.startTime);
+      final sessionVolume = session.exercises
+          .map(
+            (e) => e.sets.map((s) => s.reps.map((r) => r.metrics?.rom ?? 0).reduce((a, b) => a + b)).reduce((a, b) => a + b),
+          )
+          .reduce((a, b) => a + b);
+
+      weeklyVolume.update(
+        weekStart,
+        (value) => value + sessionVolume,
+        ifAbsent: () => sessionVolume.toDouble(),
       );
     }
+
+    return weeklyVolume.entries.map((entry) {
+      return {'date': entry.key, 'value': entry.value};
+    }).toList();
   }
 
-  void addCompletedWorkout(WorkoutSession workout) {
-    _completedWorkouts.insert(0, workout);
-    notifyListeners();
-  }
-
-  int get weeklyWorkoutCount {
-    final now = DateTime.now();
-    final startOfWeek = DateTime(
-      now.year,
-      now.month,
-      now.day - (now.weekday - 1),
-    );
-    return _completedWorkouts.where((workout) {
-      return workout.endTime != null && workout.endTime!.isAfter(startOfWeek);
-    }).length;
-  }
-
-  int get streak {
-    // This is a simplified streak calculation. A more robust implementation
-    // would be needed for a real app.
-    return _completedWorkouts.length;
-  }
-
-  int get totalPoints {
-    // Assuming each workout session is worth 10 points
-    return _completedWorkouts.length * 10;
+  DateTime _getWeekStart(DateTime date) {
+    return date.subtract(Duration(days: date.weekday - 1));
   }
 }

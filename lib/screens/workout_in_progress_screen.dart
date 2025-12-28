@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:myapp/models/workout_session.dart';
+import 'package:myapp/providers/user_provider.dart';
 import 'package:myapp/screens/live_workout_screen.dart';
+import 'package:myapp/services/workout_service.dart';
 import 'package:provider/provider.dart';
 
 import '../models/exercise.dart';
 import '../models/workout.dart';
 import '../services/badge_service.dart';
 import '../services/music_service.dart';
-import '../services/progress_service.dart';
 
 class WorkoutInProgressScreen extends StatefulWidget {
   final Workout workout;
@@ -93,10 +94,13 @@ class _WorkoutInProgressScreenState extends State<WorkoutInProgressScreen> {
   }
 
   void _completeWorkout() async {
-    final progressService = Provider.of<ProgressService>(
+    final workoutService = Provider.of<WorkoutService>(
       context,
       listen: false,
     );
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    if (user == null) return;
+
     final session = WorkoutSession(
       sessionId: DateTime.now().millisecondsSinceEpoch.toString(),
       workoutName: widget.workout.name,
@@ -105,7 +109,7 @@ class _WorkoutInProgressScreenState extends State<WorkoutInProgressScreen> {
       exercises: widget.workout.exercises,
       endTime: DateTime.now(),
     );
-    progressService.addCompletedWorkout(session);
+    await workoutService.saveWorkoutSession(user.uid, session);
     await _badgeService.checkAndAwardBadges();
     if (mounted) {
       Provider.of<MusicService>(context, listen: false).pause();
@@ -152,7 +156,7 @@ class _WorkoutInProgressScreenState extends State<WorkoutInProgressScreen> {
       builder: (context, musicService, child) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           child: Row(
             children: [
               const Icon(Icons.music_note),

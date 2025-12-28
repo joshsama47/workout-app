@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../services/progress_service.dart';
+import '../providers/user_provider.dart';
+import '../services/workout_service.dart';
 
 class ProgressSnapshot extends StatelessWidget {
   const ProgressSnapshot({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final progressService = Provider.of<ProgressService>(context);
+    final workoutService = Provider.of<WorkoutService>(context);
+    final user = Provider.of<UserProvider>(context).user;
+
+    if (user == null) {
+      return const SizedBox.shrink();
+    }
 
     return Card(
       elevation: 4,
@@ -28,12 +34,23 @@ class ProgressSnapshot extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStat(context, 'Streak', '${progressService.streak} days'),
-                _buildStat(
-                  context,
-                  'This Week',
-                  '${progressService.weeklyWorkoutCount} workouts',
+                FutureBuilder<int>(
+                  future: workoutService.getWorkoutStreak(user.uid),
+                  builder: (context, snapshot) {
+                    final streak = snapshot.data ?? 0;
+                    return _buildStat(context, 'Streak', '$streak days');
+                  },
                 ),
+                StreamBuilder(
+                    stream: workoutService.getWorkoutHistory(user.uid),
+                    builder: (context, snapshot) {
+                      final weeklyWorkoutCount = snapshot.data?.length ?? 0;
+                      return _buildStat(
+                        context,
+                        'This Week',
+                        '$weeklyWorkoutCount workouts',
+                      );
+                    }),
               ],
             ),
           ],

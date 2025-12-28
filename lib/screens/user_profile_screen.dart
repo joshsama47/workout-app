@@ -5,10 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../data/badges.dart';
-import '../models/badge.dart';
 import '../providers/user_provider.dart';
 import '../services/auth_service.dart';
-import '../services/progress_service.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
@@ -17,7 +15,6 @@ class UserProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context);
-    final progressService = Provider.of<ProgressService>(context);
     final user = userProvider.user;
 
     return Scaffold(
@@ -57,11 +54,6 @@ class UserProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.fitness_center),
-              title: const Text('Workouts Completed'),
-              trailing: Text(progressService.completedWorkouts.toString()),
-            ),
-            ListTile(
               leading: const Icon(Icons.history),
               title: const Text('Workout History'),
               onTap: () {
@@ -74,11 +66,6 @@ class UserProfileScreen extends StatelessWidget {
               onTap: () {
                 context.go('/friends');
               },
-            ),
-            ListTile(
-              leading: const Icon(Icons.star),
-              title: const Text('Points Earned'),
-              trailing: Text(progressService.totalPoints.toString()),
             ),
             const Divider(),
             const Padding(

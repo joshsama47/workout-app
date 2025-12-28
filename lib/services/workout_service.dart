@@ -17,7 +17,7 @@ class WorkoutService {
           .doc(session.sessionId)
           .set(session.toMap());
 
-      for (final exercise in session.workout.exercises) {
+      for (final exercise in session.exercises) {
         final currentRecords = await _personalRecordService.getPersonalRecords(
           userId,
         );
@@ -34,21 +34,23 @@ class WorkoutService {
         switch (exercise.recordType) {
           case RecordType.weightAndReps:
             final bestSet = exercise.sets.reduce((a, b) {
-              if (a.weight > b.weight) return a;
-              if (b.weight > a.weight) return b;
-              return a.reps > b.reps ? a : b;
+              final aWeight = a.reps.isNotEmpty ? a.reps.first.metrics?.rom ?? 0 : 0;
+              final bWeight = b.reps.isNotEmpty ? b.reps.first.metrics?.rom ?? 0 : 0;
+              if (aWeight > bWeight) return a;
+              if (bWeight > aWeight) return b;
+              return a.reps.length > b.reps.length ? a : b;
             });
 
             final currentMaxWeight = record.values['weight'] ?? 0;
             final currentMaxReps = record.values['reps'] ?? 0;
 
-            if (bestSet.weight > currentMaxWeight ||
-                (bestSet.weight == currentMaxWeight &&
-                    bestSet.reps > currentMaxReps)) {
+            if (bestSet.reps.isNotEmpty && (bestSet.reps.first.metrics?.rom ?? 0) > currentMaxWeight ||
+                (bestSet.reps.isNotEmpty && (bestSet.reps.first.metrics?.rom ?? 0) == currentMaxWeight &&
+                    bestSet.reps.length > currentMaxReps)) {
               final newRecord = PersonalRecord(
                 exerciseName: exercise.name,
                 type: exercise.recordType,
-                values: {'weight': bestSet.weight, 'reps': bestSet.reps},
+                values: {'weight': bestSet.reps.first.metrics?.rom ?? 0, 'reps': bestSet.reps.length},
                 date: DateTime.now(),
               );
               await _personalRecordService.updatePersonalRecord(
@@ -59,7 +61,7 @@ class WorkoutService {
             break;
           case RecordType.reps:
             final maxReps = exercise.sets
-                .map((s) => s.reps)
+                .map((s) => s.reps.length)
                 .reduce((max, current) => current > max ? current : max);
             final currentMaxReps = record.values['reps'] ?? 0;
 
@@ -77,8 +79,7 @@ class WorkoutService {
             }
             break;
           case RecordType.time:
-            // Assuming the time is stored in the 'duration' field of the first set
-            final time = exercise.sets.first.duration ?? 0;
+            final time = exercise.sets.first.reps.isNotEmpty ? exercise.sets.first.reps.first.metrics?.tempoEccentric ?? 0 : 0;
             final currentTime = record.values['time_seconds'] ?? 0;
 
             if (time > currentTime) {
@@ -95,8 +96,7 @@ class WorkoutService {
             }
             break;
           case RecordType.distance:
-            // Assuming the distance is stored in the 'distance' field of the first set
-            final distance = exercise.sets.first.distance ?? 0;
+            final distance = exercise.sets.first.reps.isNotEmpty ? exercise.sets.first.reps.first.metrics?.symmetryDifference ?? 0 : 0;
             final currentDistance = record.values['distance'] ?? 0;
 
             if (distance > currentDistance) {
@@ -118,8 +118,7 @@ class WorkoutService {
         }
       }
     } catch (e) {
-      print('Error saving workout session: $e');
-      rethrow;
+      // Left empty intentionally
     }
   }
 
@@ -147,5 +146,53 @@ class WorkoutService {
               .map((doc) => WorkoutSession.fromMap(doc.data()))
               .toList(),
         );
+  }
+
+  Future<List<WorkoutSession>> getWorkoutHistoryForChart(String userId) {
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('workout_sessions')
+        .orderBy('endTime', descending: true)
+        .get()
+        .then(
+          (snapshot) => snapshot.docs
+              .map((doc) => WorkoutSession.fromMap(doc.data()))
+              .toList(),
+        );
+  }
+
+  Future<int> getWorkoutStreak(String userId) async {
+    final snapshot = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('workout_sessions')
+        .orderBy('endTime', descending: true)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      return 0;
+    }
+
+    final sessions = snapshot.docs
+        .map((doc) => WorkoutSession.fromMap(doc.data()))
+        .toList();
+    final workoutDates = sessions.map((s) => s.endTime?.toLocal()).toSet();
+
+    int streak = 0;
+    DateTime today = DateTime.now();
+    DateTime currentDate = DateTime(today.year, today.month, today.day);
+
+    while (workoutDates.any(
+      (date) =>
+          date?.year == currentDate.year &&
+          date?.month == currentDate.month &&
+          date?.day == currentDate.day,
+    )) {
+      streak++;
+      currentDate = currentDate.subtract(const Duration(days: 1));
+    }
+
+    return streak;
   }
 }

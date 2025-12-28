@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // Add this
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:go_router/go_router.dart';
 

@@ -1,4 +1,4 @@
-import 'exercise.dart';
+import 'package:myapp/models/exercise.dart';
 
 class Workout {
   final String id;
@@ -40,6 +40,21 @@ class Workout {
       rest: rest ?? this.rest,
       duration: duration ?? this.duration,
       completedAt: completedAt ?? this.completedAt,
+    );
+  }
+
+  factory Workout.fromMap(Map<String, dynamic> map) {
+    return Workout(
+      id: map['id'],
+      name: map['name'],
+      exercises: List<Exercise>.from(
+        map['exercises']?.map((x) => Exercise.fromMap(x)),
+      ),
+      sets: map['sets'],
+      reps: map['reps'],
+      rest: map['rest'],
+      duration: map['duration'],
+      completedAt: map['completedAt']?.toDate(),
     );
   }
 }
